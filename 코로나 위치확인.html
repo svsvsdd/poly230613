@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<HTML>
+	<!-- 주석 -->
+	<HEAD>
+		<META charset="UTF-8">
+		<TITLE>예방접종센터 위치정보 API</TITLE>
+		<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+		<SCRIPT>
+			$( function() {
+				var textcounter = 0;
+				$("#inputTextBox").focus();
+				$("#inputTextBox").on("keyup",function(key){
+			        if(key.keyCode==13) {
+			        	var inputText = $("#inputTextBox").val();
+						if(inputText != "") {
+							$("#contetsbox").append("<div id='detailtext" + textcounter + "' class='detailtextstyle'>" + inputText + "<img id='deletebutton" + textcounter + "' value='" + textcounter + "' class='xbutton' src='x.png'></div>");
+							$("#deletebutton" + textcounter).click( function() {
+								var currentCount = $(this).attr("value");
+								console.log(currentCount);
+								$("#detailtext" + currentCount).remove();
+							});
+							$("#inputTextBox").val("");
+							$("#inputTextBox").focus();
+							textcounter++;
+
+							fetch("https://api.odcloud.kr/api/15077586/v1/centers?page=" + inputText + "&perPage=20", {
+								method: 'GET',
+								headers: {
+									'accept': 'application/json',
+									'Authorization': 'Infuser pfwPJqSsq35REx9xZhUJmvGHVuFCPWyLXHFabpDm0vvuJWJOKBauTxCFCektk6tHTTEwHUnoGB/9gek1IyD9ww=='
+								}
+							})
+							.then( response => response.json() )
+							.then( json => { 
+								console.log(json);
+								inputText = json.data[0].address;
+								$("#contetsbox").append("<div id='detailtext" + textcounter + "' class='detailtextstyle'>" + inputText + "<img id='deletebutton" + textcounter + "' value='" + textcounter + "' class='xbutton' src='x.png'></div>");
+								$("#deletebutton" + textcounter).click( function() {
+									var currentCount = $(this).attr("value");
+									console.log(currentCount);
+									$("#detailtext" + currentCount).remove();
+								});
+								$("#inputTextBox").val("");
+								$("#inputTextBox").focus();
+								textcounter++;
+							})
+						}    
+			        }
+			    });				
+			});
+
+		</SCRIPT>
+		<STYLE>
+			.xbutton {
+				width: 30px;
+				height: 30px;
+			}
+			.titleboxstyle {
+				width: 100%;
+				background-color: gray;
+			}
+			.contentsboxstyle {
+				width: 100%;
+				background-color: #E1E1E1;
+			}
+			.mainstyle {
+				width: 500px;
+			}
+			.detailtextstyle {
+				width: 90%;
+				margin-left: 5%;
+				margin-right: 5%;
+				margin-bottom: 10px;
+				background-color: white;
+			}
+			.inputboxstyle {
+				width: 90%;
+				margin-left: 5%;
+				font-size: 20px;
+			}
+		</STYLE>		
+	</HEAD>
+	<BODY>
+		<div id="mainframe" class="mainstyle">
+			<div id="titlebox" class="titleboxstyle">1-10위치입력</div>
+			<div id="contetsbox" class="contentsboxstyle"></div>
+			<div id="inputbox">
+				<input type="text" id="inputTextBox" class="inputboxstyle">
+			</div>
+		</div>
+		
+	</BODY>
+</HTML>
