@@ -5,6 +5,10 @@
 		<META charset="UTF-8">
 		<TITLE>예방접종센터 위치정보 API</TITLE>
 		<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
+		<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8dbf1909882ec7ebabe17d780c365e89&libraries=LIBRARY"></script>
+
+
 		<SCRIPT>
 			$( function() {
 				var textcounter = 0;
@@ -54,6 +58,7 @@
 								console.log(json);
 								inputText = json.data[0].address;
 								inputText2 = json.data[0].facilityName;
+								googleMap = json.data[0].address;
 
 								$("#contetsbox").append("<div id='detailtext" + textcounter + "' class='detailtextstyle'>" + inputText + "<br>" + inputText2 + "<img id='deletebutton" + textcounter + "' value='" + textcounter + "' class='xbutton' src='x.png'></div>");
 								$("#deletebutton" + textcounter).click( function() {
@@ -64,6 +69,16 @@
 								$("#inputTextBox").val("");
 								$("#inputTextBox").focus();
 								textcounter++;
+
+
+
+								var googleMap = json.data[0].address;
+			
+								var mapSrc = 'https://map.kakao.com/link/search/' + googleMap;
+								document.getElementById("mapFrame").src = mapSrc;
+
+
+
 
 
 							})
@@ -112,6 +127,9 @@
 			<div id="inputbox">
 				<input type="text" id="inputTextBox" class="inputboxstyle">
 			</div>
+
+			<iframe id="mapFrame" width="900" height="850" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
 		</div>
 		
 	</BODY>
