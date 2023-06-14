@@ -12,7 +12,26 @@
 				$("#inputTextBox").on("keyup",function(key){
 			        if(key.keyCode==13) {
 			        	var inputText = $("#inputTextBox").val();
-						if(inputText != "") {
+
+
+
+						var isNumber = true;
+						for (var i = 0; i < inputText.length; i++) {
+							var charCode = inputText.charCodeAt(i);
+							
+							// 아스키 코드를 사용하여 숫자 범위인지 확인
+							if (charCode < 48 || charCode > 57) {
+								isNumber = false;
+								break;
+							}
+						}
+
+
+
+						// if(inputText != "") {
+						if(inputText != "" && isNumber) {
+
+
 							$("#contetsbox").append("<div id='detailtext" + textcounter + "' class='detailtextstyle'>" + inputText + "<img id='deletebutton" + textcounter + "' value='" + textcounter + "' class='xbutton' src='x.png'></div>");
 							$("#deletebutton" + textcounter).click( function() {
 								var currentCount = $(this).attr("value");
@@ -23,7 +42,7 @@
 							$("#inputTextBox").focus();
 							textcounter++;
 
-							fetch("https://api.odcloud.kr/api/15077586/v1/centers?page=" + inputText + "&perPage=20", {
+							fetch("https://api.odcloud.kr/api/15077586/v1/centers?page=" + inputText + "&perPage=1", {
 								method: 'GET',
 								headers: {
 									'accept': 'application/json',
@@ -34,7 +53,9 @@
 							.then( json => { 
 								console.log(json);
 								inputText = json.data[0].address;
-								$("#contetsbox").append("<div id='detailtext" + textcounter + "' class='detailtextstyle'>" + inputText + "<img id='deletebutton" + textcounter + "' value='" + textcounter + "' class='xbutton' src='x.png'></div>");
+								inputText2 = json.data[0].facilityName;
+
+								$("#contetsbox").append("<div id='detailtext" + textcounter + "' class='detailtextstyle'>" + inputText + "<br>" + inputText2 + "<img id='deletebutton" + textcounter + "' value='" + textcounter + "' class='xbutton' src='x.png'></div>");
 								$("#deletebutton" + textcounter).click( function() {
 									var currentCount = $(this).attr("value");
 									console.log(currentCount);
@@ -43,8 +64,12 @@
 								$("#inputTextBox").val("");
 								$("#inputTextBox").focus();
 								textcounter++;
+
+
 							})
-						}    
+						} else {
+							alert("숫자를 입력하세요");
+						}
 			        }
 			    });				
 			});
@@ -57,14 +82,14 @@
 			}
 			.titleboxstyle {
 				width: 100%;
-				background-color: gray;
+				background-color: rgb(167, 164, 164);
 			}
 			.contentsboxstyle {
 				width: 100%;
 				background-color: #E1E1E1;
 			}
 			.mainstyle {
-				width: 500px;
+				width: 60%;
 			}
 			.detailtextstyle {
 				width: 90%;
@@ -82,7 +107,7 @@
 	</HEAD>
 	<BODY>
 		<div id="mainframe" class="mainstyle">
-			<div id="titlebox" class="titleboxstyle">1-10위치입력</div>
+			<div id="titlebox" class="titleboxstyle">진료소 ID 입력(1 - 284)</div>
 			<div id="contetsbox" class="contentsboxstyle"></div>
 			<div id="inputbox">
 				<input type="text" id="inputTextBox" class="inputboxstyle">
