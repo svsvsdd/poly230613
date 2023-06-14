@@ -1,159 +1,136 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <TITLE>test</TITLE>
-  <link rel="shortcut icon" href="favicon.png">
-  <style>
-    /* CSS styles */
+<HTML>
+	<!-- 주석 -->
+	<HEAD>
+		<META charset="UTF-8">
+		<TITLE>예방접종센터 위치정보 API</TITLE>
+		<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 
-    html, body {
-      margin:0;
-      padding:0;
-      height: 100%;
-      background-image: url("bg1.jpg");
-      background-repeat: no-repeat;
-      background-size: cover;
-    }
+		<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8dbf1909882ec7ebabe17d780c365e89&libraries=LIBRARY"></script>
 
-    body {
-      display: flex;
-      align-items: stretch;
-    }
+
+		<SCRIPT>
+			$( function() {
+				var textcounter = 0;
+				$("#inputTextBox").focus();
+				$("#inputTextBox").on("keyup",function(key){
+			        if(key.keyCode==13) {
+			        	var inputText = $("#inputTextBox").val();
 
 
 
+						var isNumber = true;
+						for (var i = 0; i < inputText.length; i++) {
+							var charCode = inputText.charCodeAt(i);
+							
+							// 아스키 코드를 사용하여 숫자 범위인지 확인
+							if (charCode < 48 || charCode > 57) {
+								isNumber = false;
+								break;
+							}
+						}
 
-    #list-container {
-      flex: 0 0 20%;
-      background-color: #C0EEF6;
-    }
 
-    #list-container ul {
-      list-style-type: none;
-      margin: 2px;
-      padding: 7px;
-    }
 
-    #list-container li {
-      cursor: pointer;
-      padding: 5px 10px;
-    }
+						// if(inputText != "") {
+						if(inputText != "" && isNumber) {
 
-    #details-container {
-      flex: 1;
-      padding: 10px;
-      background-color: #CFD4D5;
-    }
-  </style>
 
-  
-</head>
-<body>
-  <div id="list-container">
-    <ul>
-      <li><h1>홈</h1></li>
-      <li><b>학생소개</b></li>
-      <li>지도</li>
-      <li>FAQ</li>
-      <li>기타</li>
-      <li>Git</li>
-    </ul>
-    
-  </div>
+							$("#contetsbox").append("<div id='detailtext" + textcounter + "' class='detailtextstyle'>" + inputText + "<img id='deletebutton" + textcounter + "' value='" + textcounter + "' class='xbutton' src='x.png'></div>");
+							$("#deletebutton" + textcounter).click( function() {
+								var currentCount = $(this).attr("value");
+								console.log(currentCount);
+								$("#detailtext" + currentCount).remove();
+							});
+							$("#inputTextBox").val("");
+							$("#inputTextBox").focus();
+							textcounter++;
 
-  <div id="details-container">
-  <img src="home.jpg"  style="width:500px; height:500px;">
-  </div>
+							fetch("https://api.odcloud.kr/api/15077586/v1/centers?page=" + inputText + "&perPage=1", {
+								method: 'GET',
+								headers: {
+									'accept': 'application/json',
+									'Authorization': 'Infuser pfwPJqSsq35REx9xZhUJmvGHVuFCPWyLXHFabpDm0vvuJWJOKBauTxCFCektk6tHTTEwHUnoGB/9gek1IyD9ww=='
+								}
+							})
+							.then( response => response.json() )
+							.then( json => { 
+								console.log(json);
+								inputText = json.data[0].address;
+								inputText2 = json.data[0].facilityName;
+								googleMap = json.data[0].address;
 
-  <script>
-    // JavaScript code
-document.addEventListener('DOMContentLoaded', function() {
-  var listItems = document.querySelectorAll('#list-container li');
-  var detailsContainer = document.getElementById('details-container');
+								$("#contetsbox").append("<div id='detailtext" + textcounter + "' class='detailtextstyle'>" + inputText + "<br>" + inputText2 + "<img id='deletebutton" + textcounter + "' value='" + textcounter + "' class='xbutton' src='x.png'></div>");
+								$("#deletebutton" + textcounter).click( function() {
+									var currentCount = $(this).attr("value");
+									console.log(currentCount);
+									$("#detailtext" + currentCount).remove();
+								});
+								$("#inputTextBox").val("");
+								$("#inputTextBox").focus();
+								textcounter++;
 
-  // Add click event listener to each list item
-  listItems.forEach(function(item) {
-    item.addEventListener('click', function() {
-      var itemName = this.innerText;
 
-      // Display corresponding details HTML
-      if (itemName === '홈') {
-        detailsContainer.innerHTML = '<img src="home.jpg"  style="width:500px; height:500px;">';
-      } else if (itemName === '학생소개') {
-        detailsContainer.innerHTML = `
-          <div id="detailbox" class="detailtext" style="width:50%; background: gray;">
-          <img src="신혁진 사진.jpg" title='신혁진' style="width:150px; height:200px;">
-          <h3>신혁진</h3>  
-            <ul>
-              <li>나이 34 </li>
-              <li><a href="https://www.kopo.ac.kr/index.do" target="_blank">폴리텍</a></li>
-              <li>학번 2325343007 </li>
-              <li><a href="https://www.skku.edu/skku/index.do" target="_blank">성균관대 </a> </li>
-              <li><a href="재학증명서 신혁진.jpg" target="_blank">재학증명서 </a></li>
-              <br>
-             
-              
-            </ul></td>  
-          </div>`;
-      } else if (itemName === '지도') {
-        detailsContainer.innerHTML = `
-        <div class="map">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3210.9263492727514!2d128.1563621766792!3d36.41097718954212!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3565b2b1c54bd09b%3A0x240eccc7c6845bca!2z7IOB7KO87Iuc7LKt!5e0!3m2!1sko!2skr!4v1686099944940!5m2!1sko!2skr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
-        <br>
-        <br>
-        <b>주소</b>
-        <br>
-        경북 상주시 
-        <br>
-        <b>연락처</b>
-        <br>
-        010-2374-8933
 
-        `;
-      } else if (itemName === 'FAQ') {
-        detailsContainer.innerHTML = `
-        <p><h1>자주 묻는 질문 </h1></p>
-        
-        <p><b>비 전공자도 잘 따라갈 수 있을까요?</b></p>
-        
-        <p>교육과정이 2016년부터 운영되었으며, 그동안 비 전공자의 비중이 훨씬 높았고, 모두 잘 적응하여 기업체에서도 인정받고 있습니다. 비전공자들도 삼성전자의 연구원 등 대기업, 연구소로도 많이 진출하고 있습니다.</p>
+								var googleMap = json.data[0].address;
+			
+								var mapSrc = 'https://map.kakao.com/link/search/' + googleMap;
+								document.getElementById("mapFrame").src = mapSrc;
 
 
 
 
 
-        `;
+							})
+						} else {
+							alert("숫자를 입력하세요");
+						}
+			        }
+			    });				
+			});
 
+		</SCRIPT>
+		<STYLE>
+			.xbutton {
+				width: 30px;
+				height: 30px;
+			}
+			.titleboxstyle {
+				width: 100%;
+				background-color: rgb(167, 164, 164);
+			}
+			.contentsboxstyle {
+				width: 100%;
+				background-color: #E1E1E1;
+			}
+			.mainstyle {
+				width: 60%;
+			}
+			.detailtextstyle {
+				width: 90%;
+				margin-left: 5%;
+				margin-right: 5%;
+				margin-bottom: 10px;
+				background-color: white;
+			}
+			.inputboxstyle {
+				width: 90%;
+				margin-left: 5%;
+				font-size: 20px;
+			}
+		</STYLE>		
+	</HEAD>
+	<BODY>
+		<div id="mainframe" class="mainstyle">
+			<div id="titlebox" class="titleboxstyle">진료소 ID 입력(1 - 284)</div>
+			<div id="contetsbox" class="contentsboxstyle"></div>
+			<div id="inputbox">
+				<input type="text" id="inputTextBox" class="inputboxstyle">
+			</div>
 
-      } else if (itemName === '기타') {
-        detailsContainer.innerHTML = `
-        <h1>프로젝트</h1>
-        <br>
-        <br>
-        진행중인 프로젝트
-        <br>
-        
+			<iframe id="mapFrame" width="900" height="850" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 
-        `;
-
-      } else if (itemName === 'Git') {
-        detailsContainer.innerHTML = `
-        <h1>프로젝트</h1>
-        <br>
-        <div class="코로나">
-        <iframe src="코로나 위치확인.html" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        
-
-        `;
-
-      }
-
-    });
-  });
-});
-  </script>
-
-
-</body>
-</html>
+		</div>
+		
+	</BODY>
+</HTML>
