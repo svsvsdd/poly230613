@@ -104,7 +104,8 @@
 				background-color: #E1E1E1;
 			}
 			.mainstyle {
-				width: 60%;
+				width: 40%;
+				float: left;
 			}
 			.detailtextstyle {
 				width: 90%;
@@ -118,6 +119,13 @@
 				margin-left: 5%;
 				font-size: 20px;
 			}
+			.mapFrame{
+				width: 60%;
+				height: 800px;
+				float: right;
+			}
+
+
 		</STYLE>		
 	</HEAD>
 	<BODY>
@@ -128,9 +136,10 @@
 				<input type="text" id="inputTextBox" class="inputboxstyle">
 			</div>
 
-			<iframe id="mapFrame" width="900" height="850" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-
+			
 		</div>
-		
+	
+		<iframe id="mapFrame" class="mapFrame" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
 	</BODY>
 </HTML>
